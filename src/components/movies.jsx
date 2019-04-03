@@ -4,18 +4,24 @@ import { getMovie } from "../services/fakeMovieService";
 
 class Movies extends Component {
   state = {
-    movies: getMovies()
+    movies: getMovies(),
+    movie: getMovie()
   };
 
   handleDelete = movie => {
     console.log(movie);
+    let movies = this.state.movies.filter(m => m._id !== movie._id);
+    this.setState({ movies });
   };
 
   render() {
+    const { length: count } = this.state.movies;
+    if (count === 0) return <p>There are no movies in the database</p>;
+
     return (
       <div className="container">
-        <p>Showing movies in the database</p>
-        <table class="table">
+        <p>Showing {count} movies in the database</p>
+        <table className="table">
           <thead>
             <tr>
               <th scope="col">Title</th>
@@ -27,7 +33,7 @@ class Movies extends Component {
           </thead>
           <tbody>
             {this.state.movies.map(movie => (
-              <tr>
+              <tr key={movie._id}>
                 <td>{movie.title}</td>
                 <td>{movie.genre.name}</td>
                 <td>{movie.numberInStock}</td>
@@ -35,8 +41,7 @@ class Movies extends Component {
                 <td>
                   <button
                     onClick={() => this.handleDelete(movie)}
-                    type="button"
-                    class="btn btn-danger btn-sm"
+                    className="btn btn-danger btn-sm"
                   >
                     Delete
                   </button>
